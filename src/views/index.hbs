@@ -1,0 +1,61 @@
+<div class='input w-100'>
+  {{#if origin}}
+    <div class='d-flex flex-column bd-highlight justify-content-center align-items-center'>
+      <div class='form-check form-switch'>
+        <input class='form-check-input' type='checkbox' role='switch' id='invisible' onchange='handleChange(this)' />
+        <label class='form-check-label' for='invisible'>Invisible</label>
+      </div>
+      <div class='input-group mt-3' style='width:350px;'>
+        <input
+          type='text'
+          class='form-control'
+          name='shorten'
+          id='url'
+          disabled='disabled'
+          value='{{origin}}/{{char}}'
+          data-origin='{{origin}}'
+          data-char='{{char}}'
+          data-zwsp='{{zwsp}}'
+        />
+        <div>
+          <button class='btn btn-primary' onclick='copy()'>Copy URL</button>
+        </div>
+      </div>
+    </div>
+    <div id='copied' class='d-none position-absolute top-50 start-50 translate-middle border border-success w-25 h-25 bg-light text-dark'>
+      <p class='position-absolute top-50 start-50 translate-middle'>URL Copied</p>
+    </div>
+    <script>
+      const url = document.getElementById('url') 
+      
+      function copy() { 
+        navigator.clipboard.writeText(url.value) 
+        handleCopiedMsg()
+      } 
+      
+      function handleChange(checkbox) {
+        if (checkbox.checked) { 
+          url.value = url.dataset.origin + '/' + url.dataset.zwsp 
+        } else {
+          url.value = url.dataset.origin + '/' + url.dataset.char 
+        }
+      }
+
+      function handleCopiedMsg() {
+        const copied = document.getElementById('copied') 
+        copied.classList.remove('d-none')
+        setTimeout(function(){copied.classList.add('d-none')}, 1000)
+      }
+    </script>
+  {{else}}
+    <form action='/' method='POST' class='d-flex flex-column bd-highlight justify-content-center align-items-center'>
+      <div class='input-group mt-3 w-50'>
+        <input type='text' class='form-control' name='url' />
+        <button type='submit' class='btn btn-secondary'>Shorten</button>
+      </div>
+      {{#if msg}}
+        <h5 class='mt-3'>{{msg}}</h5>
+      {{/if}}
+    </form>
+  {{/if}}
+</div>
