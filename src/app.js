@@ -5,6 +5,8 @@ const path = require('path')
 const getRandomStr = require('./utils/getRandomStr')
 const URL = require('./models/URL')
 
+require('dotenv').config()
+
 require('./config/mongoose')
 
 const app = express()
@@ -21,12 +23,12 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  if (!req.body.url) return res.redirect('/')
+  if (!req.body.url) return res.render('index', { msg: 'Please enter a valid URL to shorten' })
   const url = req.body.url
   const randomStr = getRandomStr()
   URL.findOne({ url })
     .then((data) => (data ? data : URL.create({ url, char: randomStr.char, zwsp: randomStr.zwsp })))
-    .then((data) => res.render('index', { origin: req.headers.origin, char: data.char, zwsp: data.zwsp  }))
+    .then((data) => res.render('index', { origin: req.headers.origin, char: data.char, zwsp: data.zwsp }))
     .catch((error) => console.error(error))
 })
 
@@ -40,6 +42,6 @@ app.get('/:randomStr', (req, res) => {
     .catch((error) => console.error(error))
 })
 
-app.listen(3000, () => {
-  console.log('Express is listening on http://localhost:3000')
+app.listen(process.env.PORT, () => {
+  console.log(`App is running on http://localhost:${process.env.PORT}`)
 })
